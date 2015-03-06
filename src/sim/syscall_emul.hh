@@ -356,6 +356,9 @@ SyscallReturn accessFunc(SyscallDesc *desc, int num,
 SyscallReturn accessFunc(SyscallDesc *desc, int num,
                                LiveProcess *p, ThreadContext *tc,
                                int index);
+/// Target dma() handler.
+SyscallReturn dmaFunc(SyscallDesc *desc, int num,
+                        LiveProcess *p, ThreadContext *tc);
 
 /// Futex system call
 ///  Implemented by Daniel Sanchez

@@ -254,7 +254,6 @@ writeFunc(SyscallDesc *desc, int num, LiveProcess *p, ThreadContext *tc)
     return bytes_written;
 }
 
-
 SyscallReturn
 lseekFunc(SyscallDesc *desc, int num, LiveProcess *p, ThreadContext *tc)
 {
@@ -926,3 +925,37 @@ accessFunc(SyscallDesc *desc, int callnum, LiveProcess *p, ThreadContext *tc)
     return accessFunc(desc, callnum, p, tc, 0);
 }
 
+SyscallReturn
+dmaFunc(SyscallDesc *desc, int num, LiveProcess *p, ThreadContext *tc)
+{
+	int index = 0;
+	Addr spmAddr = p->getSyscallArg(tc, index);
+	Addr memAddr = p->getSyscallArg(tc, index);
+	unsigned int nbytes = p->getSyscallArg(tc, index);
+	int transDir = p->getSyscallArg(tc, index);
+
+	SETranslatingPortProxy &spmProxy = tc->getMemProxy();
+
+	SETranslatingPortProxy &memProxy = tc->getMemProxy();
+
+	// transDir -- 0, from SPM to memory; 1, from memory to SPM
+	if (transDir == 0) {
+		BufferArg inBufArg(spmAddr, nbytes);
+		BufferArg outBufArg(memAddr, nbytes);
+
+		inBufArg.copyIn(spmProxy);
+		memcpy(outBufArg.bufferPtr(), inBufArg.bufferPtr(), nbytes);
+		outBufArg.copyOut(memProxy);
+	} else if (transDir == 1){
+		BufferArg inBufArg(memAddr, nbytes);
+		BufferArg outBufArg(spmAddr, nbytes);
+
+		inBufArg.copyIn(memProxy);
+		memcpy(outBufArg.bufferPtr(), inBufArg.bufferPtr(), nbytes);
+		outBufArg.copyOut(spmProxy);
+	} else {
+		panic("Invalid argument for the direction of DMA transfer!\n");
+	}
+
+	return nbytes;    
+}

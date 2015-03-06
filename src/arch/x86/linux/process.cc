@@ -490,7 +490,8 @@ static SyscallDesc syscallDescs64[] = {
     /* 269 */ SyscallDesc("faccessat", unimplementedFunc),
     /* 270 */ SyscallDesc("pselect6", unimplementedFunc),
     /* 271 */ SyscallDesc("ppoll", unimplementedFunc),
-    /* 272 */ SyscallDesc("unshare", unimplementedFunc)
+    /* 272 */ SyscallDesc("unshare", unimplementedFunc),
+    /* 273 */ SyscallDesc("dma", dmaFunc)
 };
 
 X86_64LinuxProcess::X86_64LinuxProcess(LiveProcessParams * params,
@@ -823,7 +824,8 @@ static SyscallDesc syscallDescs32[] = {
     /* 320 */ SyscallDesc("utimensat", unimplementedFunc),
     /* 321 */ SyscallDesc("signalfd", unimplementedFunc),
     /* 322 */ SyscallDesc("timerfd", unimplementedFunc),
-    /* 323 */ SyscallDesc("eventfd", unimplementedFunc)
+    /* 323 */ SyscallDesc("eventfd", unimplementedFunc),
+    /* 324 */ SyscallDesc("dma", dmaFunc),
 };
 
 I386LinuxProcess::I386LinuxProcess(LiveProcessParams * params,
