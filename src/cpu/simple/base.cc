@@ -172,7 +172,7 @@ BaseSimpleCPU::regStats()
         .desc("number of times a function call or return occured")
         ;
 
-    numCondCtrlInsts
+   numCondCtrlInsts
         .name(name() + ".num_conditional_control_insts")
         .desc("number of instructions that are conditional controls")
         ;
@@ -306,6 +306,56 @@ BaseSimpleCPU::regStats()
         .name(name() + ".BranchMispred")
         .desc("Number of branch mispredictions")
         .prereq(numBranchMispred);
+
+    numCalls_sstore
+        .name(name() + ".num_func_calls_sstore")
+        .desc("number of times a function call to _sstore occured")
+        ;
+
+    numInsts_sstore
+	.name(name() + ".num_insts_sstore")
+	.desc("Number of instructions executed from _sstore")
+	;
+
+    numCalls_sload
+        .name(name() + ".num_func_calls_sload")
+        .desc("number of times a function call to _sload occured")
+        ;
+
+    numInsts_sload
+	.name(name() + ".num_insts_sload")
+	.desc("Number of instructions executed from _sload")
+	;
+
+    numCalls_l2g
+        .name(name() + ".num_func_calls_l2g")
+        .desc("number of times a function call to _l2g occured")
+        ;
+
+    numInsts_l2g
+	.name(name() + ".num_insts_l2g")
+	.desc("Number of instructions executed from _l2g")
+	;
+
+    numCalls_g2l
+        .name(name() + ".num_func_calls_g2l")
+        .desc("number of times a function call to _g2l occured")
+        ;
+
+    numInsts_g2l
+	.name(name() + ".num_insts_g2l")
+	.desc("Number of instructions executed from _g2l")
+	;
+
+    numCalls_ptr_wr
+        .name(name() + ".num_func_calls_ptr_wr")
+        .desc("number of times a function call to _ptr_wr occured")
+        ;
+
+    numInsts_ptr_wr
+	.name(name() + ".num_insts_ptr_wr")
+	.desc("Number of instructions executed from _ptr_wr")
+	;
 }
 
 void
@@ -518,7 +568,7 @@ BaseSimpleCPU::postExecute()
     if (curStaticInst->isCall() || curStaticInst->isReturn()){
         numCallsReturns++;
     }
-    
+
     //the number of branch predictions that will be made
     if (curStaticInst->isCondCtrl()){
         numCondCtrlInsts++;
@@ -532,6 +582,66 @@ BaseSimpleCPU::postExecute()
     if (curStaticInst->isStore()){
         numStoreInsts++;
     }
+
+    if (curStaticInst && (!curStaticInst->isMicroop() ||
+		curStaticInst->isFirstMicroop())) {
+	string sym_str;
+	Addr sym_addr;
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	if (sym_str == "_sstore") numInsts_sstore++;
+	else if (sym_str == "_sload") numInsts_sload++;
+	else if (sym_str == "_l2g") numInsts_l2g++;
+	else if (sym_str == "_g2l") numInsts_g2l++;
+	else if (sym_str == "_ptr_wr") numInsts_ptr_wr++;
+    }
+    //number of function calls
+    if (curStaticInst->isReturn()) {
+	string sym_str;
+	Addr sym_addr;
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	if (sym_str == "_sstore") numCalls_sstore++;
+	else if (sym_str == "_sload") numCalls_sload++;
+	else if (sym_str == "_l2g") numCalls_l2g++;
+	else if (sym_str == "_g2l") numCalls_g2l++;
+	else if (sym_str == "_ptr_wr") numCalls_ptr_wr++;
+    }
+
+    /*
+    if (curStaticInst->isCall()) {
+	string sym_str;
+	Addr sym_addr;
+	string tgt_sym_str;
+	Addr tgt_sym_addr;
+	Addr tgt_addr = 0;
+
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+
+	for (int i = 0; i < curStaticInst->numSrcRegs()-1; i++) {
+	    tgt_addr += system->getThreadContext(0)->readIntReg(curStaticInst->srcRegIdx(i));
+	    //std::cerr << curStaticInst->srcRegIdx(i) << " (0x" << std::hex << system->getThreadContext(0)->readIntReg(curStaticInst->srcRegIdx(i)) << ") ";
+	}
+	debugSymbolTable->findNearestSymbol(tgt_addr, tgt_sym_str, tgt_sym_addr);
+	std::cerr << std::hex << "Call: 0x" << instAddr << ": " << sym_str << "->" << tgt_sym_str << ": SP = 0x" << system->getThreadContext(0)->readIntReg(4) << "\n";
+    }
+
+
+    if (curStaticInst->isReturn()) {
+	string sym_str;
+	Addr sym_addr;
+	string tgt_sym_str;
+	Addr tgt_sym_addr;
+	Addr tgt_addr = 0;
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+
+	for (int i = 0; i < curStaticInst->numSrcRegs()-1; i++) {
+	    tgt_addr += system->getThreadContext(0)->readIntReg(curStaticInst->srcRegIdx(i));
+	    //std::cerr << curStaticInst->srcRegIdx(i) << " (0x" << std::hex << system->getThreadContext(0)->readIntReg(curStaticInst->srcRegIdx(i)) << ") ";
+	}
+	debugSymbolTable->findNearestSymbol(tgt_addr, tgt_sym_str, tgt_sym_addr);
+	std::cerr << std::hex << "Return: 0x" << instAddr << ": " << sym_str << "->" << tgt_sym_str << ": SP = 0x" << system->getThreadContext(0)->readIntReg(4) << "\n";
+    }
+    */
+
     /* End power model statistics */
 
     statExecutedInstType[curStaticInst->opClass()]++;

@@ -179,6 +179,10 @@ Process::Process(ProcessParams * params)
     mmap_start = mmap_end = 0;
     nxm_start = nxm_end = 0;
     // other parameters will be initialized when the program is loaded
+
+    //ybkim 
+    // Add the virtual address range of the SPM to address map (hard coded version)
+    //allocateMem(0, 0x100000 + 0x270);
 }
 
 
@@ -190,6 +194,14 @@ Process::regStats()
     num_syscalls
         .name(name() + ".num_syscalls")
         .desc("Number of system calls")
+        ;
+    num_dmacalls
+        .name(name() + ".num_dmacalls")
+        .desc("Number of DMA calls")
+        ;
+    bytes_transferred_dma
+        .name(name() + ".bytes_transferred_dma")
+        .desc("Number of bytes transferred by DMA")
         ;
 }
 
@@ -594,6 +606,14 @@ void
 LiveProcess::syscall(int64_t callnum, ThreadContext *tc)
 {
     num_syscalls++;
+
+    //std::cout << __func__ << ":0x" << std::hex << system->getThreadContext(0)->readIntReg(4) << "\n";
+
+    if (callnum == 273) {
+	int index = 2;
+	num_dmacalls++;
+	bytes_transferred_dma += this->getSyscallArg(tc, index);
+    }
 
     SyscallDesc *desc = getDesc(callnum);
     if (desc == NULL)

@@ -112,6 +112,8 @@ class Process : public SimObject
     Addr nxm_end;
 
     Stats::Scalar num_syscalls;       // number of syscalls executed
+    Stats::Scalar num_dmacalls;       // number of DMA executed
+    Stats::Scalar bytes_transferred_dma;       // number of DMA executed
 
   protected:
     // constructor

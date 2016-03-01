@@ -218,7 +218,7 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     //number of function calls/returns
     Stats::Scalar numCallsReturns;
 
-    //conditional control instructions;
+   //conditional control instructions;
     Stats::Scalar numCondCtrlInsts;
 
     //number of int instructions
@@ -285,6 +285,27 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
 
     // instruction mix histogram by OpClass
     Stats::Vector statExecutedInstType;
+
+    //number of function calls to _sstore 
+    Stats::Scalar numCalls_sstore;
+    //number of instructions executed by _sstore
+    Stats::Scalar numInsts_sstore;
+    //number of function calls to _sload
+    Stats::Scalar numCalls_sload;
+    //number of instructions executed by _sload
+    Stats::Scalar numInsts_sload;
+    //number of function calls to _l2g
+    Stats::Scalar numCalls_l2g;
+    //number of instructions executed by _l2g
+    Stats::Scalar numInsts_l2g;
+    //number of function calls to _g2l 
+    Stats::Scalar numCalls_g2l;
+    //number of instructions executed by _g2l
+    Stats::Scalar numInsts_g2l;
+    //number of function calls to _ptr_wr
+    Stats::Scalar numCalls_ptr_wr;
+    //number of instructions executed by _ptr_wr
+    Stats::Scalar numInsts_ptr_wr;
 
     void serializeThread(std::ostream &os, ThreadID tid);
     void unserializeThread(Checkpoint *cp, const std::string &section,

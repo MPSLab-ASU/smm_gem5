@@ -290,7 +290,7 @@ ElfObject::ElfObject(const string &_filename, int _fd,
                 dataSecStart = shdr.sh_addr;
             } else if (!strcmp(".bss", secName)) {
                 bssSecStart = shdr.sh_addr;
-            }
+	    }
         } else {
             Elf_Error errorNum = (Elf_Error)elf_errno();
             if (errorNum != ELF_E_NONE) {
@@ -335,16 +335,21 @@ ElfObject::ElfObject(const string &_filename, int _fd,
             data.baseAddr = phdr.p_paddr;
             data.size = phdr.p_filesz;
             data.fileImage = fileData + phdr.p_offset;
-        } else {
+	} else {
             // If it's none of the above but is loadable, 
             // load the filesize worth of data
             Segment extra;
             extra.baseAddr = phdr.p_paddr;
+
+	    //ybkim: we can get vaddr of a segment here if needed
+	    extra.vAddr = phdr.p_vaddr;
+
             extra.size = phdr.p_filesz;
             extra.fileImage = fileData + phdr.p_offset;
             extraSegments.push_back(extra);
         }
     }
+
 
     // should have found at least one loadable segment
     assert(text.size != 0);
@@ -451,6 +456,7 @@ ElfObject::loadSections(PortProxy& memProxy, Addr addrMask, Addr offset)
             return false;
         }
     }
+
     return true;
 }
 
