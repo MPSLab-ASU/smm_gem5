@@ -307,6 +307,8 @@ BaseSimpleCPU::regStats()
         .desc("Number of branch mispredictions")
         .prereq(numBranchMispred);
 
+    // Stack management functions
+
     numCalls_sstore
         .name(name() + ".num_func_calls_sstore")
         .desc("number of times a function call to _sstore occured")
@@ -355,6 +357,16 @@ BaseSimpleCPU::regStats()
     numInsts_ptr_wr
 	.name(name() + ".num_insts_ptr_wr")
 	.desc("Number of instructions executed from _ptr_wr")
+	;
+
+    numCalls_cget
+        .name(name() + ".num_func_calls_cget")
+        .desc("number of times a function call to _sstore c_get")
+        ;
+
+    numInsts_cget
+	.name(name() + ".num_insts_cget")
+	.desc("Number of instructions executed from c_get")
 	;
 }
 
@@ -588,22 +600,28 @@ BaseSimpleCPU::postExecute()
 	string sym_str;
 	Addr sym_addr;
 	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	// stack management functions
 	if (sym_str == "_sstore") numInsts_sstore++;
 	else if (sym_str == "_sload") numInsts_sload++;
 	else if (sym_str == "_l2g") numInsts_l2g++;
 	else if (sym_str == "_g2l") numInsts_g2l++;
 	else if (sym_str == "_ptr_wr") numInsts_ptr_wr++;
+	// code management functions
+	else if (sym_str == "c_get") numInsts_cget++;
     }
     //number of function calls
     if (curStaticInst->isReturn()) {
 	string sym_str;
 	Addr sym_addr;
 	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	// stack management functions
 	if (sym_str == "_sstore") numCalls_sstore++;
 	else if (sym_str == "_sload") numCalls_sload++;
 	else if (sym_str == "_l2g") numCalls_l2g++;
 	else if (sym_str == "_g2l") numCalls_g2l++;
 	else if (sym_str == "_ptr_wr") numCalls_ptr_wr++;
+	// code management functions
+	else if (sym_str == "c_get") numCalls_cget++;
     }
 
     /*

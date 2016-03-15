@@ -286,6 +286,7 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     // instruction mix histogram by OpClass
     Stats::Vector statExecutedInstType;
 
+    // stack managemnt functions
     //number of function calls to _sstore 
     Stats::Scalar numCalls_sstore;
     //number of instructions executed by _sstore
@@ -306,6 +307,13 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     Stats::Scalar numCalls_ptr_wr;
     //number of instructions executed by _ptr_wr
     Stats::Scalar numInsts_ptr_wr;
+
+
+    // code managemnt functions
+    // number of function calls to c_get
+    Stats::Scalar numCalls_cget;
+    // number of instructions executed by c_get
+    Stats::Scalar numInsts_cget;
 
     void serializeThread(std::ostream &os, ThreadID tid);
     void unserializeThread(Checkpoint *cp, const std::string &section,
