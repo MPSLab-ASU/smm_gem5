@@ -314,6 +314,10 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     Stats::Scalar numCalls_cget;
     // number of instructions executed by c_get
     Stats::Scalar numInsts_cget;
+    // number of function calls to c_call*
+    Stats::Scalar numCalls_ccall;
+    // number of instructions executed by c_call*
+    Stats::Scalar numInsts_ccall;
 
     void serializeThread(std::ostream &os, ThreadID tid);
     void unserializeThread(Checkpoint *cp, const std::string &section,
