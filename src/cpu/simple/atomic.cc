@@ -564,7 +564,10 @@ AtomicSimpleCPU::tick()
 
                 // keep an instruction count
                 if (fault == NoFault) {
-                    countInst();
+		    // jcai: only count instructions executed in user-defined functions
+		    Addr pcAddr = pcState.instAddr();
+		    if ( (pcAddr >= 0x400400 && pcAddr <  0x500400) || (pcAddr >= 0x600400 && pcAddr < 0x700400) || (pcAddr >= 0xb00400 && pcAddr < 0xc00400))
+			countInst();
                     if (!curStaticInst->isMicroop() ||
                          curStaticInst->isLastMicroop()) {
                         ppCommit->notify(std::make_pair(thread, curStaticInst));

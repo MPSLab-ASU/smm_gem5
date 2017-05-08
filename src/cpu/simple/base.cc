@@ -307,7 +307,34 @@ BaseSimpleCPU::regStats()
         .desc("Number of branch mispredictions")
         .prereq(numBranchMispred);
 
-    // Stack management functions
+    // memory accesses
+
+
+
+    // code management functions
+
+    numCalls_cget
+        .name(name() + ".num_func_calls_cget")
+        .desc("number of times a function call to c_get")
+        ;
+
+    numInsts_cget
+	.name(name() + ".num_insts_cget")
+	.desc("Number of instructions executed from c_get")
+	;
+
+    numCalls_ccall
+        .name(name() + ".num_func_calls_ccall")
+        .desc("number of times a function call to c_call*")
+        ;
+
+    numInsts_ccall
+	.name(name() + ".num_insts_ccall")
+	.desc("Number of instructions executed from c_call*")
+	;
+
+
+    // stack management functions
 
     numCalls_sstore
         .name(name() + ".num_func_calls_sstore")
@@ -359,25 +386,6 @@ BaseSimpleCPU::regStats()
 	.desc("Number of instructions executed from _ptr_wr")
 	;
 
-    numCalls_cget
-        .name(name() + ".num_func_calls_cget")
-        .desc("number of times a function call to c_get")
-        ;
-
-    numInsts_cget
-	.name(name() + ".num_insts_cget")
-	.desc("Number of instructions executed from c_get")
-	;
-
-    numCalls_ccall
-        .name(name() + ".num_func_calls_ccall")
-        .desc("number of times a function call to c_call*")
-        ;
-
-    numInsts_ccall
-	.name(name() + ".num_insts_ccall")
-	.desc("Number of instructions executed from c_call*")
-	;
 
 }
 

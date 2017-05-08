@@ -304,6 +304,47 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
     // sanity check
     assert(pkt->isRequest());
 
+    // jcai: cache code and data in the source code only
+    // cache the whole application
+    if (!(pkt->req->getVaddr() >= 0xb00400 && pkt->req->getVaddr() < 0xf00400)) {
+	uncacheableFlush(pkt);
+	blk = NULL;
+	lat = hitLatency;
+	return false;
+    }
+    // cache global and heap only
+    /*
+    if (!(pkt->req->getVaddr() >= 0xb00120 && pkt->req->getVaddr() < 0xd00120)) {
+	uncacheableFlush(pkt);
+	blk = NULL;
+	lat = hitLatency;
+	return false;
+    }
+    */
+    /*
+    {
+	//static std::unordered_map <std::string, unsigned long> counters;
+	Addr instAddr = pkt->req->getPC();
+	std::string sym_str;
+	Addr sym_addr;
+
+	Addr dataAddr = pkt->req->getVaddr();
+	std::string var_name;
+	Addr var_addr;
+
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	debugSymbolTable->findNearestSymbol(dataAddr, var_name, var_addr);
+
+	if (pkt->req->getVaddr() >= 0xc00400 && pkt->req->getVaddr() <  0xd00400) {
+	    overallUserStackAccesses++;
+	} else if (pkt->req->getVaddr() >= 0xd00400 && pkt->req->getVaddr() <  0xe00400) {
+	    overallUserHeapAccesses++;
+	} else if (pkt->req->getVaddr() >= 0xe00400  && pkt->req->getVaddr() < 0xf00400) {
+	    overallUserGlobalAccesses++;
+	}
+    }
+    */
+
     DPRINTF(Cache, "%s for %s address %x size %d\n", __func__,
             pkt->cmdString(), pkt->getAddr(), pkt->getSize());
     if (pkt->req->isUncacheable()) {
@@ -320,6 +361,37 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
             pkt->req->isInstFetch() ? " (ifetch)" : "",
             pkt->getAddr(), pkt->isSecure() ? "s" : "ns",
             blk ? "hit" : "miss", blk ? blk->print() : "");
+
+    // jcai: categorize misses
+    /*
+    if (name() == "system.cpu.dcache") {
+	//static std::unordered_map <std::string, unsigned long> counters;
+	static unsigned long stack_counter = 0;
+	static unsigned long global_counter = 0;
+	static unsigned long heap_counter = 0;
+	Addr instAddr = pkt->req->getPC();
+	std::string sym_str;
+	Addr sym_addr;
+
+	Addr dataAddr = pkt->req->getVaddr();
+	std::string var_name;
+	Addr var_addr;
+
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	debugSymbolTable->findNearestSymbol(dataAddr, var_name, var_addr);
+
+	if (pkt->req->getVaddr() >= 0xb00400 && pkt->req->getVaddr() <  0xc00400) {
+	    ++stack_counter;
+	    std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", stack count = " << std::dec << stack_counter << "\n";
+	} else if (pkt->req->getVaddr() >= 0xc00400 && pkt->req->getVaddr() <  0xd00400) {
+	    ++heap_counter;
+	    std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", heap count = " << std::dec << heap_counter << "\n";
+	} else if (pkt->req->getVaddr() >= 0xd00400  && pkt->req->getVaddr() < 0xe00400) {
+	    ++global_counter;
+	    std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", global count = " << std::dec << global_counter << "\n";
+	}
+    }
+    */
 
     // Writeback handling is special case.  We can write the block
     // into the cache without having a writeable copy (or any copy at

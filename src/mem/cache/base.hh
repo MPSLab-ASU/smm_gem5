@@ -436,6 +436,17 @@ class BaseCache : public MemObject
 
     Stats::Scalar mshr_no_allocate_misses;
 
+    // statistics of user-defined code
+    // number of overall accesses to code data in user-defined code
+    Stats::Scalar overallUserCodeAccesses;
+    // number of overall accesses to stack data in user-defined code
+    Stats::Scalar overallUserStackAccesses;
+    // number of overall accesses to heap data in user-defined code
+    Stats::Scalar overallUserHeapAccesses;
+    // number of overall accesses to global data in user-defined code
+    Stats::Scalar overallUserGlobalAccesses;
+
+
     /**
      * @}
      */

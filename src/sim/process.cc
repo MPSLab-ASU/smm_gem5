@@ -183,6 +183,9 @@ Process::Process(ProcessParams * params)
     //ybkim 
     // Add the virtual address range of the SPM to address map (hard coded version)
     //allocateMem(0, 0x100000 + 0x270);
+    //jcai
+    // Allocate pages for SPM space and cacheable regions
+    allocateMem(0x400000, 0xc00000);
 }
 
 
