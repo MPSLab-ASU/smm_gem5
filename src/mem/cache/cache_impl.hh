@@ -364,31 +364,36 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
 
     // jcai: categorize misses
     /*
-    if (name() == "system.cpu.dcache") {
-	//static std::unordered_map <std::string, unsigned long> counters;
-	static unsigned long stack_counter = 0;
-	static unsigned long global_counter = 0;
-	static unsigned long heap_counter = 0;
-	Addr instAddr = pkt->req->getPC();
-	std::string sym_str;
-	Addr sym_addr;
+    if (!blk) {
+	if (name() == "system.cpu.dcache") {
+	    Addr stackBegin = 0xc00400, stackEnd = 0xd00400;
+	    Addr heapBegin = 0xd00400, heapEnd = 0xe00400;
+	    Addr globalBegin = 0xe00400, globalEnd = 0xf00400;
+	    //static std::unordered_map <std::string, unsigned long> counters;
+	    static unsigned long stack_counter = 0;
+	    static unsigned long global_counter = 0;
+	    static unsigned long heap_counter = 0;
+	    Addr instAddr = pkt->req->getPC();
+	    std::string sym_str;
+	    Addr sym_addr;
 
-	Addr dataAddr = pkt->req->getVaddr();
-	std::string var_name;
-	Addr var_addr;
+	    Addr dataAddr = pkt->req->getVaddr();
+	    std::string var_name;
+	    Addr var_addr;
 
-	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
-	debugSymbolTable->findNearestSymbol(dataAddr, var_name, var_addr);
+	    debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	    debugSymbolTable->findNearestSymbol(dataAddr, var_name, var_addr);
 
-	if (pkt->req->getVaddr() >= 0xb00400 && pkt->req->getVaddr() <  0xc00400) {
-	    ++stack_counter;
-	    std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", stack count = " << std::dec << stack_counter << "\n";
-	} else if (pkt->req->getVaddr() >= 0xc00400 && pkt->req->getVaddr() <  0xd00400) {
-	    ++heap_counter;
-	    std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", heap count = " << std::dec << heap_counter << "\n";
-	} else if (pkt->req->getVaddr() >= 0xd00400  && pkt->req->getVaddr() < 0xe00400) {
-	    ++global_counter;
-	    std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", global count = " << std::dec << global_counter << "\n";
+	    if (pkt->req->getVaddr() >= stackBegin && pkt->req->getVaddr() <  stackEnd) {
+		++stack_counter;
+		std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", stack count = " << std::dec << stack_counter << "\n";
+	    } else if (pkt->req->getVaddr() >= heapBegin && pkt->req->getVaddr() < heapEnd) {
+		++heap_counter;
+		std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", heap count = " << std::dec << heap_counter << "\n";
+	    } else if (pkt->req->getVaddr() >= globalBegin  && pkt->req->getVaddr() < globalEnd) {
+		++global_counter;
+		std::cerr << std::hex << sym_str << ", PC = 0x" << instAddr << ", var = " << var_name << ", address = 0x" << pkt->req->getVaddr()  << ", global count = " << std::dec << global_counter << "\n";
+	    }
 	}
     }
     */
