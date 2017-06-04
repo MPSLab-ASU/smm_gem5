@@ -337,8 +337,15 @@ AtomicSimpleCPU::readMem(Addr addr, uint8_t * data,
             else {
                 if (fastmem && system->isMemAddr(pkt.getAddr()))
                     system->getPhysMem().access(&pkt);
-                else
-                    dcache_latency += dcachePort.sendAtomic(&pkt);
+                else {
+		    // jcai: only cache predefined data
+		    Addr vaddr = pkt.req->getVaddr();
+		    if (vaddr >= 0xc00400 && vaddr <  0xf00400)
+			dcache_latency += dcachePort.sendAtomic(&pkt);
+		    else 
+			system->getPhysMem().access(&pkt);
+
+		}
             }
             dcache_access = true;
 
@@ -448,8 +455,14 @@ AtomicSimpleCPU::writeMem(uint8_t *data, unsigned size,
                 } else {
                     if (fastmem && system->isMemAddr(pkt.getAddr()))
                         system->getPhysMem().access(&pkt);
-                    else
-                        dcache_latency += dcachePort.sendAtomic(&pkt);
+		    else {
+			// jcai: only cache predefined data
+			Addr vaddr = pkt.req->getVaddr();
+			if (vaddr >= 0xc00400 && vaddr <  0xf00400)
+			    dcache_latency += dcachePort.sendAtomic(&pkt);
+			else 
+			    system->getPhysMem().access(&pkt);
+		    }
                 }
                 dcache_access = true;
                 assert(!pkt.isError());
@@ -547,8 +560,14 @@ AtomicSimpleCPU::tick()
 
                     if (fastmem && system->isMemAddr(ifetch_pkt.getAddr()))
                         system->getPhysMem().access(&ifetch_pkt);
-                    else
-                        icache_latency = icachePort.sendAtomic(&ifetch_pkt);
+		    else {
+			// jcai: only cache predefined code
+			Addr vaddr = ifetch_pkt.req->getVaddr();
+			if (vaddr >= 0xb00400 && vaddr <  0xc00400)
+			    icache_latency = icachePort.sendAtomic(&ifetch_pkt);
+			else 
+			    system->getPhysMem().access(&ifetch_pkt);
+		    }
 
                     assert(!ifetch_pkt.isError());
 
@@ -564,10 +583,7 @@ AtomicSimpleCPU::tick()
 
                 // keep an instruction count
                 if (fault == NoFault) {
-		    // jcai: only count instructions executed in user-defined functions
-		    Addr pcAddr = pcState.instAddr();
-		    if ( (pcAddr >= 0x400400 && pcAddr <  0x500400) || (pcAddr >= 0x600400 && pcAddr < 0x700400) || (pcAddr >= 0xb00400 && pcAddr < 0xc00400))
-			countInst();
+                    countInst();
                     if (!curStaticInst->isMicroop() ||
                          curStaticInst->isLastMicroop()) {
                         ppCommit->notify(std::make_pair(thread, curStaticInst));

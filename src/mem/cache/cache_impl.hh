@@ -304,14 +304,15 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
     // sanity check
     assert(pkt->isRequest());
 
-    // jcai: cache code and data in the source code only
-    // cache the whole application
-    if (!(pkt->req->getVaddr() >= 0xb00400 && pkt->req->getVaddr() < 0xf00400)) {
-	uncacheableFlush(pkt);
-	blk = NULL;
-	lat = hitLatency;
-	return false;
+    DPRINTF(Cache, "%s for %s address %x size %d\n", __func__,
+            pkt->cmdString(), pkt->getAddr(), pkt->getSize());
+    if (pkt->req->isUncacheable()) {
+        uncacheableFlush(pkt);
+        blk = NULL;
+        lat = hitLatency;
+        return false;
     }
+
     // cache global and heap only
     /*
     if (!(pkt->req->getVaddr() >= 0xb00120 && pkt->req->getVaddr() < 0xd00120)) {
@@ -321,6 +322,9 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
 	return false;
     }
     */
+
+    assert (pkt->req->getVaddr() >= 0xb00400 && pkt->req->getVaddr() < 0xf00400);
+
     /*
     {
 	//static std::unordered_map <std::string, unsigned long> counters;
@@ -344,15 +348,6 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
 	}
     }
     */
-
-    DPRINTF(Cache, "%s for %s address %x size %d\n", __func__,
-            pkt->cmdString(), pkt->getAddr(), pkt->getSize());
-    if (pkt->req->isUncacheable()) {
-        uncacheableFlush(pkt);
-        blk = NULL;
-        lat = hitLatency;
-        return false;
-    }
 
     int id = pkt->req->hasContextId() ? pkt->req->contextId() : -1;
     blk = tags->accessBlock(pkt->getAddr(), pkt->isSecure(), lat, id);
