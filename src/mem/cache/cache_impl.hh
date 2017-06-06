@@ -393,6 +393,38 @@ Cache<TagStore>::access(PacketPtr pkt, BlkType *&blk,
     }
     */
 
+
+    // trace the instructions that access SPM, and the variables they accessed
+    if (!blk) {
+	Addr codeBegin = 0xb00400, codeEnd = 0xc00400;
+	Addr stackBegin = 0xc00400, stackEnd = 0xd00400;
+	Addr heapBegin = 0xd00400, heapEnd = 0xe00400;
+	Addr globalBegin = 0xe00400, globalEnd = 0xf00400;
+
+	//static std::unordered_map <std::string, unsigned long> counters;
+	Addr instAddr = pkt->req->getPC();
+	std::string sym_str;
+	Addr sym_addr;
+
+	Addr dataAddr = pkt->req->getVaddr();
+	std::string var_name;
+	Addr var_addr;
+
+	debugSymbolTable->findNearestSymbol(instAddr, sym_str, sym_addr);
+	debugSymbolTable->findNearestSymbol(dataAddr, var_name, var_addr);
+
+	if (pkt->req->getVaddr() >= codeBegin && pkt->req->getVaddr() <  codeEnd) {
+	    ++overallUserCodeMisses;
+	} else if (pkt->req->getVaddr() >= stackBegin && pkt->req->getVaddr() < stackEnd) {
+	    ++overallUserStackMisses;
+	} else if (pkt->req->getVaddr() >= heapBegin && pkt->req->getVaddr() <  heapEnd) {
+	    ++overallUserHeapMisses;
+	} else if (pkt->req->getVaddr() >= globalEnd && pkt->req->getVaddr() <  globalBegin) {
+	    ++overallUserGlobalMisses;
+	}
+    }
+
+
     // Writeback handling is special case.  We can write the block
     // into the cache without having a writeable copy (or any copy at
     // all).  Like writebacks, we write into the cache upon initial

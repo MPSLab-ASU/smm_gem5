@@ -760,24 +760,24 @@ BaseCache::regStats()
         ;
 
     // statistics of user-defined code
-    overallUserCodeAccesses
-        .name(name() + ".overall_user_code_accesses")
-        .desc("number of overall accesses to code data in user-defined code")
+    overallUserCodeMisses
+        .name(name() + ".overall_user_code_misses")
+        .desc("number of overall cache misses to code in user-defined code")
         .flags(total | nozero | nonan)
         ;
-    overallUserStackAccesses
-        .name(name() + ".overall_user_stack_accesses")
-        .desc("number of overall accesses to stack data in user-defined code")
+    overallUserStackMisses
+        .name(name() + ".overall_user_stack_misses")
+        .desc("number of overall cache misses to stack data in user-defined code")
         .flags(total | nozero | nonan)
         ;
-    overallUserHeapAccesses
-        .name(name() + ".overall_user_heap_accesses")
-        .desc("number of overall accesses to heap data in user-defined code")
+    overallUserHeapMisses
+        .name(name() + ".overall_user_heap_misses")
+        .desc("number of overall cache misses to heap data in user-defined code")
         .flags(total | nozero | nonan)
         ;
-    overallUserGlobalAccesses
-        .name(name() + ".overall_user_global_accesses")
-        .desc("number of overall accesses to global/static data in user-defined code")
+    overallUserGlobalMisses
+        .name(name() + ".overall_user_global_misses")
+        .desc("number of overall cache misses to global/static data in user-defined code")
         .flags(total | nozero | nonan)
         ;
 }

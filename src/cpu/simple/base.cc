@@ -614,6 +614,9 @@ BaseSimpleCPU::postExecute()
         numStoreInsts++;
     }
 
+    static unordered_map <string, unsigned long> instCount;
+    static unordered_map <string, unsigned long> callCount;
+
     if (curStaticInst && (!curStaticInst->isMicroop() ||
 		curStaticInst->isFirstMicroop())) {
 	string sym_str;
@@ -631,6 +634,10 @@ BaseSimpleCPU::postExecute()
 	std::size_t found = sym_str.find("c_call");
 	if (found!=std::string::npos)
 	    numInsts_ccall++;
+
+	if (instAddr >= 0x400400 && instAddr < 0x500400) {
+	    instCount[sym_str]++;
+	}
     }
     //number of function calls
     if (curStaticInst->isReturn()) {
@@ -649,6 +656,16 @@ BaseSimpleCPU::postExecute()
 	std::size_t found = sym_str.find("c_call");
 	if (found!=std::string::npos)
 	    numCalls_ccall++;
+
+	if (instAddr >= 0x400400 && instAddr < 0x500400) {
+	    callCount[sym_str]++;
+	}
+	if (sym_str == "smm_main") {
+	    for (auto ii = callCount.begin(), ie = callCount.end(); ii != ie; ++ii)
+		cerr << ii->first << " is called " << ii->second << " times\n";
+	    for (auto ii = instCount.begin(), ie = instCount.end(); ii != ie; ++ii)
+		cerr << ii->first << " executes " << ii->second << " instructions\n";
+	}
     }
 
     /*
