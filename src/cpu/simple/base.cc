@@ -615,7 +615,10 @@ BaseSimpleCPU::postExecute()
     }
 
     static unordered_map <string, unsigned long> instCount;
+<<<<<<< HEAD
+=======
     static unordered_map <string, unsigned long> callCount;
+>>>>>>> 05f5b26c7f9aab94ddbeeb8db40a70c893e203e4
 
     if (curStaticInst && (!curStaticInst->isMicroop() ||
 		curStaticInst->isFirstMicroop())) {
@@ -635,7 +638,11 @@ BaseSimpleCPU::postExecute()
 	if (found!=std::string::npos)
 	    numInsts_ccall++;
 
+<<<<<<< HEAD
+	if ( (instAddr >= 0x400400 && instAddr < 0x500400) || (instAddr >= 0x600400 && instAddr < 0x700400) || (instAddr >= 0xb00400 && instAddr < 0xc00400) ) {
+=======
 	if (instAddr >= 0x400400 && instAddr < 0x500400) {
+>>>>>>> 05f5b26c7f9aab94ddbeeb8db40a70c893e203e4
 	    instCount[sym_str]++;
 	}
     }
@@ -657,6 +664,13 @@ BaseSimpleCPU::postExecute()
 	if (found!=std::string::npos)
 	    numCalls_ccall++;
 
+<<<<<<< HEAD
+	if (sym_str == "smm_main") {
+	    for (auto ii = instCount.begin(), ie = instCount.end(); ii != ie; ++ii)
+		cerr << ii->first << " executes " << ii->second << " instructions\n";
+	}
+
+=======
 	if (instAddr >= 0x400400 && instAddr < 0x500400) {
 	    callCount[sym_str]++;
 	}
@@ -666,6 +680,7 @@ BaseSimpleCPU::postExecute()
 	    for (auto ii = instCount.begin(), ie = instCount.end(); ii != ie; ++ii)
 		cerr << ii->first << " executes " << ii->second << " instructions\n";
 	}
+>>>>>>> 05f5b26c7f9aab94ddbeeb8db40a70c893e203e4
     }
 
     /*
