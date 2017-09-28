@@ -255,7 +255,8 @@ if options.ruby:
             system.cpu[i].dtb.walker.port = ruby_port.slave
 else:
     MemClass = Simulation.setMemClass(options)
-    system.membus = CoherentXBar()
+    #system.membus = CoherentXBar()
+    system.membus = NoncoherentXBar()
     system.system_port = system.membus.slave
     CacheConfig.config_cache(options, system)
     MemConfig.config_mem(options, system)

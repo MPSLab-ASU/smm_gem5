@@ -340,6 +340,10 @@ ElfObject::ElfObject(const string &_filename, int _fd,
             // load the filesize worth of data
             Segment extra;
             extra.baseAddr = phdr.p_paddr;
+
+	    //ybkim: we can get vaddr of a segment here if needed
+	    extra.vAddr = phdr.p_vaddr;
+
             extra.size = phdr.p_filesz;
             extra.fileImage = fileData + phdr.p_offset;
             extraSegments.push_back(extra);

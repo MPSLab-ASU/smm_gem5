@@ -759,6 +759,27 @@ BaseCache::regStats()
         .desc("Number of misses that were no-allocate")
         ;
 
+    // statistics of user-defined code
+    overallUserCodeMisses
+        .name(name() + ".overall_user_code_misses")
+        .desc("number of overall cache misses to code in user-defined code")
+        .flags(total | nozero | nonan)
+        ;
+    overallUserStackMisses
+        .name(name() + ".overall_user_stack_misses")
+        .desc("number of overall cache misses to stack data in user-defined code")
+        .flags(total | nozero | nonan)
+        ;
+    overallUserHeapMisses
+        .name(name() + ".overall_user_heap_misses")
+        .desc("number of overall cache misses to heap data in user-defined code")
+        .flags(total | nozero | nonan)
+        ;
+    overallUserGlobalMisses
+        .name(name() + ".overall_user_global_misses")
+        .desc("number of overall cache misses to global/static data in user-defined code")
+        .flags(total | nozero | nonan)
+        ;
 }
 
 unsigned int

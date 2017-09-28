@@ -337,8 +337,14 @@ AtomicSimpleCPU::readMem(Addr addr, uint8_t * data,
             else {
                 if (fastmem && system->isMemAddr(pkt.getAddr()))
                     system->getPhysMem().access(&pkt);
-                else
-                    dcache_latency += dcachePort.sendAtomic(&pkt);
+                else {
+		    // jcai: only cache predefined data
+		    Addr vaddr = pkt.req->getVaddr();
+		    if (vaddr >= 0xb00400 && vaddr <  0xe00400)
+			dcache_latency += dcachePort.sendAtomic(&pkt);
+		    else
+			system->getPhysMem().access(&pkt);
+		}
             }
             dcache_access = true;
 
@@ -448,8 +454,14 @@ AtomicSimpleCPU::writeMem(uint8_t *data, unsigned size,
                 } else {
                     if (fastmem && system->isMemAddr(pkt.getAddr()))
                         system->getPhysMem().access(&pkt);
-                    else
-                        dcache_latency += dcachePort.sendAtomic(&pkt);
+		    else {
+			// jcai: only cache predefined data
+			Addr vaddr = pkt.req->getVaddr();
+			if (vaddr >= 0xb00400 && vaddr <  0xe00400)
+			    dcache_latency += dcachePort.sendAtomic(&pkt);
+			else
+			    system->getPhysMem().access(&pkt);
+		    }
                 }
                 dcache_access = true;
                 assert(!pkt.isError());
@@ -547,8 +559,14 @@ AtomicSimpleCPU::tick()
 
                     if (fastmem && system->isMemAddr(ifetch_pkt.getAddr()))
                         system->getPhysMem().access(&ifetch_pkt);
-                    else
-                        icache_latency = icachePort.sendAtomic(&ifetch_pkt);
+		    else {
+			// jcai: only cache predefined code
+			Addr vaddr = ifetch_pkt.req->getVaddr();
+			if (vaddr >= 0xa00400 && vaddr <  0xb00400)
+			    icache_latency = icachePort.sendAtomic(&ifetch_pkt);
+			else
+			    system->getPhysMem().access(&ifetch_pkt);
+		    }
 
                     assert(!ifetch_pkt.isError());
 

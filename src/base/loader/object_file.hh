@@ -107,6 +107,14 @@ class ObjectFile
         Addr     baseAddr;
         uint8_t *fileImage;
         size_t   size;
+
+	//ybkim
+        Addr     vAddr;
+	Section() { }
+
+	Section(Addr baseAddr, uint8_t *fileImage, size_t size) :
+	    baseAddr(baseAddr),
+	    fileImage(fileImage), size(size), vAddr(baseAddr) { }
     };
 
     Addr entry;

@@ -179,6 +179,10 @@ Process::Process(ProcessParams * params)
     mmap_start = mmap_end = 0;
     nxm_start = nxm_end = 0;
     // other parameters will be initialized when the program is loaded
+
+    //jcai
+    // Allocate pages for cacheable regions
+    allocateMem(0xa00000, 0x500000);
 }
 
 

@@ -188,15 +188,19 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
 
     void countInst()
     {
-        if (!curStaticInst->isMicroop() || curStaticInst->isLastMicroop()) {
-            numInst++;
-            numInsts++;
-        }
-        numOp++;
-        numOps++;
+	// jcai: only count instructions executed in predefined functions
+	Addr pc = thread->instAddr();
+	if (pc >= 0xa00400 && pc < 0xb00400) {
+	    if (!curStaticInst->isMicroop() || curStaticInst->isLastMicroop()) {
+		numInst++;
+		numInsts++;
+	    }
+	    numOp++;
+	    numOps++;
 
-        system->totalNumInsts++;
-        thread->funcExeInst++;
+	    system->totalNumInsts++;
+	    thread->funcExeInst++;
+	}
     }
 
     virtual Counter totalInsts() const
@@ -218,7 +222,7 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     //number of function calls/returns
     Stats::Scalar numCallsReturns;
 
-    //conditional control instructions;
+   //conditional control instructions;
     Stats::Scalar numCondCtrlInsts;
 
     //number of int instructions

@@ -71,6 +71,12 @@ ObjectFile::loadSection(Section *sec, PortProxy& memProxy, Addr addrMask, Addr o
 {
     if (sec->size != 0) {
         Addr addr = (sec->baseAddr & addrMask) + offset;
+
+        //ybkim
+	cout << std::hex << "vaddr: " << sec->vAddr << ", paddr: " << addr << endl;
+	Addr vaddr = (sec->vAddr & addrMask) + offset;
+	memProxy.memsetBlob(vaddr, 0, sec->size);
+
         if (sec->fileImage) {
             memProxy.writeBlob(addr, sec->fileImage, sec->size);
         }
