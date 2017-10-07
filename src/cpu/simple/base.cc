@@ -376,14 +376,14 @@ BaseSimpleCPU::regStats()
 	.desc("Number of instructions executed from _g2l")
 	;
 
-    numCalls_ptr_wr
-        .name(name() + ".num_func_calls_ptr_wr")
-        .desc("number of times a function call to _ptr_wr occured")
+    numCalls_g2l_wr
+        .name(name() + ".num_func_calls_g2l_wr")
+        .desc("number of times a function call to _g2l_wr occured")
         ;
 
-    numInsts_ptr_wr
-	.name(name() + ".num_insts_ptr_wr")
-	.desc("Number of instructions executed from _ptr_wr")
+    numInsts_g2l_wr
+	.name(name() + ".num_insts_g2l_wr")
+	.desc("Number of instructions executed from _g2l_wr")
 	;
 
 
@@ -626,7 +626,7 @@ BaseSimpleCPU::postExecute()
 	else if (sym_str == "_sload") numInsts_sload++;
 	else if (sym_str == "_l2g") numInsts_l2g++;
 	else if (sym_str == "_g2l") numInsts_g2l++;
-	else if (sym_str == "_ptr_wr") numInsts_ptr_wr++;
+	else if (sym_str == "_g2l_wr") numInsts_g2l_wr++;
 	// code management functions
 	else if (sym_str == "c_get") numInsts_cget++;
 	
@@ -648,7 +648,7 @@ BaseSimpleCPU::postExecute()
 	else if (sym_str == "_sload") numCalls_sload++;
 	else if (sym_str == "_l2g") numCalls_l2g++;
 	else if (sym_str == "_g2l") numCalls_g2l++;
-	else if (sym_str == "_ptr_wr") numCalls_ptr_wr++;
+	else if (sym_str == "_g2l_wr") numCalls_g2l_wr++;
 	// code management functions
 	else if (sym_str == "c_get") numCalls_cget++;
 

@@ -307,10 +307,10 @@ class BaseSimpleCPU : public BaseCPU, public ExecContext
     Stats::Scalar numCalls_g2l;
     //number of instructions executed by _g2l
     Stats::Scalar numInsts_g2l;
-    //number of function calls to _ptr_wr
-    Stats::Scalar numCalls_ptr_wr;
-    //number of instructions executed by _ptr_wr
-    Stats::Scalar numInsts_ptr_wr;
+    //number of function calls to _g2l_wr
+    Stats::Scalar numCalls_g2l_wr;
+    //number of instructions executed by _g2l_wr
+    Stats::Scalar numInsts_g2l_wr;
 
 
     // code managemnt functions
